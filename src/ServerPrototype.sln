@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.App", "Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Common.Networking", "ServerPrototype.Common.Networking\ServerPrototype.Common.Networking.csproj", "{DE9DFFD2-8805-497F-9744-8E58F71E7DE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPrototype.Shared", "ServerPrototype.Shared\ServerPrototype.Shared.csproj", "{B6CC45D5-91A1-4A61-9617-60200887B6E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Interfaces", "ServerPrototype.Interfaces\ServerPrototype.Interfaces.csproj", "{ADE0696B-932B-446D-9C88-DCF7A7229274}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPrototype.Interfaces", "ServerPrototype.Interfaces\ServerPrototype.Interfaces.csproj", "{ADE0696B-932B-446D-9C88-DCF7A7229274}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Actors", "ServerPrototype.Actors\ServerPrototype.Actors.csproj", "{B3ED9936-61CE-4B02-AFB3-6E9CF5CDB8F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPrototype.Actors", "ServerPrototype.Actors\ServerPrototype.Actors.csproj", "{B3ED9936-61CE-4B02-AFB3-6E9CF5CDB8F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Common", "ServerPrototype.Common\ServerPrototype.Common.csproj", "{E46172B9-325C-4EDB-A995-75C8FFAF089B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPrototype.Common", "ServerPrototype.Common\ServerPrototype.Common.csproj", "{E46172B9-325C-4EDB-A995-75C8FFAF089B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Shared", "ServerPrototype.Shared\GameServerPrototype-Shared\ServerPrototype.Shared\ServerPrototype.Shared.csproj", "{A17E9527-A47A-4E4C-8F8D-C5E08932246D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,6 @@ Global
 		{DE9DFFD2-8805-497F-9744-8E58F71E7DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE9DFFD2-8805-497F-9744-8E58F71E7DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE9DFFD2-8805-497F-9744-8E58F71E7DE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B6CC45D5-91A1-4A61-9617-60200887B6E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6CC45D5-91A1-4A61-9617-60200887B6E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B6CC45D5-91A1-4A61-9617-60200887B6E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B6CC45D5-91A1-4A61-9617-60200887B6E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADE0696B-932B-446D-9C88-DCF7A7229274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADE0696B-932B-446D-9C88-DCF7A7229274}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADE0696B-932B-446D-9C88-DCF7A7229274}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{E46172B9-325C-4EDB-A995-75C8FFAF089B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E46172B9-325C-4EDB-A995-75C8FFAF089B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E46172B9-325C-4EDB-A995-75C8FFAF089B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A17E9527-A47A-4E4C-8F8D-C5E08932246D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A17E9527-A47A-4E4C-8F8D-C5E08932246D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A17E9527-A47A-4E4C-8F8D-C5E08932246D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A17E9527-A47A-4E4C-8F8D-C5E08932246D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
