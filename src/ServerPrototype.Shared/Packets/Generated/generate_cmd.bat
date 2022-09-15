@@ -1,0 +1,1 @@
+mpc -i "../" -o "generated.cs"
