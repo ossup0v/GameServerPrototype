@@ -97,6 +97,7 @@ namespace ServerPrototype.App.Infrastructure
                                     await OnLogin(p);
                                     break;
                                 default:
+                                    _log.LogError("UserSession have no implementation. Packet: {@packet}", serverPacket);
                                     break;
                             }
                         }
