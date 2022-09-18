@@ -7,6 +7,7 @@ using ServerPrototype.Common.Networking;
 using ServerPrototype.Interfaces.Grains;
 using ServerPrototype.Interfaces.Infrastructure;
 using ServerPrototype.Interfaces.Messages.Requests;
+using ServerPrototype.Shared;
 using ServerPrototype.Shared.Packets.ClientToServer;
 using ServerPrototype.Shared.Packets.ServerToClient;
 using System.Buffers;
@@ -96,6 +97,9 @@ namespace ServerPrototype.App.Infrastructure
                                 case LoginPacket p:
                                     await OnLogin(p);
                                     break;
+                                case StartBuildFarmConstructionPacket p:
+                                    await OnStartBuildFarmConstruction(p);
+                                    break;
                                 default:
                                     _log.LogError("UserSession have no implementation. Packet: {@packet}", serverPacket);
                                     break;
@@ -128,8 +132,6 @@ namespace ServerPrototype.App.Infrastructure
 
             _log.LogInformation("End of ListenForNewPackets");
         }
-
-
 
         private async Task OnLogin(LoginPacket loginRequest)
         {
@@ -170,7 +172,7 @@ namespace ServerPrototype.App.Infrastructure
                     await playerGrain.LoginNotify();
                     var player = playerData.Value;
 
-                    SendMessage(new LoginConfirmPacket () { NickName = player.Nickname, UserId = _userId, Heroes = new int[0] });
+                    SendMessage(new LoginConfirmPacket() { NickName = player.Nickname, UserId = _userId, Heroes = new int[0] });
                     _log.LogInformation($"Loggined. Account: {loginRequest.ClientId}. UserId: {apiResult.Value.UserId}. Nickname: {player.Nickname}. Created: {player.CreatedAt}");
 
                     _nickname = player.Nickname;
@@ -189,6 +191,28 @@ namespace ServerPrototype.App.Infrastructure
                 _log.LogError(e, "exception during login user");
             }
         }
+
+        private async Task OnStartBuildFarmConstruction(StartBuildFarmConstructionPacket p)
+        {
+            using var _ = _log.WithScope(("session_id", Id), ("user_id", _userId));
+
+            try
+            {
+                var playerGrain = _cluster.GetGrain<IPlayerGrain>(_userId);
+                var playerData = await playerGrain.StartBuildConstruction(new StartBuildRequest(p.Point, p.ConstructionId));
+
+                if (playerData.Status != HttpStatusCode.OK)
+                {
+                    _log.LogError($"Can't build farm construction. Message: {playerData.Message}");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e, "exception during start building farm construction");
+            }
+        }
+
 
         private async Task TryUnsubscribeFromGroup()
         {
@@ -210,7 +234,7 @@ namespace ServerPrototype.App.Infrastructure
 
         private bool SendUnauthorizedErrorIfNeeded()
         {
-            if (!string.IsNullOrEmpty(_userId)) 
+            if (!string.IsNullOrEmpty(_userId))
                 return false;
 
             _log.LogWarning($"User is not logged in");

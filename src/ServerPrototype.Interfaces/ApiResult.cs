@@ -6,10 +6,12 @@ namespace ServerPrototype.Interfaces
     [Immutable]
     public class ApiResult
     {
-        public ApiResult()
-        {
+        private static ApiResult OkInstance = new ApiResult(HttpStatusCode.OK);
+        private static ApiResult BadRequestInstance = new ApiResult(HttpStatusCode.BadRequest);
+        private static ApiResult NotModifiedInstance = new ApiResult(HttpStatusCode.NotModified);
+        private static ApiResult InternalErrorInstance = new ApiResult(HttpStatusCode.InternalServerError);
 
-        }
+        public ApiResult() { }
 
         public ApiResult(HttpStatusCode status, string message = null)
         {
@@ -25,13 +27,13 @@ namespace ServerPrototype.Interfaces
 
         public string Message { get; set; }
 
-        public static ApiResult OK { get; } = new ApiResult(HttpStatusCode.OK);
+        public static ApiResult OK { get; } = OkInstance;
 
-        public static ApiResult BadRequest { get; } = new ApiResult(HttpStatusCode.BadRequest);
+        public static ApiResult BadRequest { get; } = BadRequestInstance;
 
-        public static ApiResult NotModified { get; } = new ApiResult(HttpStatusCode.NotModified);
+        public static ApiResult NotModified { get; } = NotModifiedInstance;
 
-        public static ApiResult InternalError { get; } = new ApiResult(HttpStatusCode.InternalServerError);
+        public static ApiResult InternalError { get; } = InternalErrorInstance;
     }
 
     [Immutable]

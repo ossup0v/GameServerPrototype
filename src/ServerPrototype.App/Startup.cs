@@ -4,8 +4,13 @@ using App.Metrics.Timer;
 using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.ObjectPool;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Options;
+using Newtonsoft.Json;
+using ServerPrototype.Actors.Grains;
 using ServerPrototype.App.Configs;
 using ServerPrototype.App.Infrastructure;
+using ServerPrototype.Interfaces.Grains;
 using ServerPrototype.Interfaces.Infrastructure;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -24,6 +29,17 @@ namespace ServerPrototype.App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
+//            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new JsonKnownTypeConverter());
+
+
+            //BsonClassMap.RegisterClassMap<PlayerFarmGrain.PlayerFramState>(cm =>
+            //{
+            //    cm.AutoMap();
+            //    //cm.SetDictionaryRepresentation(x => x.InventoryContainer.Items, DictionaryRepresentation.Document);
+            //    cm.SetDictionaryRepresentation(x => x., DictionaryRepresentation.Document);
+            //});
             //BsonClassMap.RegisterClassMap<PlayerState>(cm =>
             //{
             //    cm.AutoMap();
@@ -96,7 +112,6 @@ namespace ServerPrototype.App
             });
 
             services.AddHttpClient();
-            //services.AddTransient<IDropProcessor, DropProcessor>(provider => new DropProcessor(provider.GetService<ILogger<DropProcessor>>(), provider.GetService<IDropConfigProvider>()));
 
             //services.Configure<HttpClientsConfig>(Configuration.GetSection("HttpClients"));
             //services.AddHttpClient(Constants.HTTP_CLIENT_BOTS_KEY, (serviceProvider, config) =>

@@ -15,4 +15,12 @@
     <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.6.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ServerPrototype.Shared\ServerPrototype.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Grains\Messages\Responses\" />
+  </ItemGroup>
+
 </Project>

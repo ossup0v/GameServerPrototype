@@ -7,7 +7,6 @@ using ServerPrototype.Interfaces.Messages.Requests;
 
 namespace ServerPrototype.Actors.Grains
 {
-
     public class AccountGrain : Grain<AccountGrain.AccountState>, IAccountGrain
     {
         public class AccountState

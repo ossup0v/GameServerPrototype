@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Actors", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Common", "ServerPrototype.Common\ServerPrototype.Common.csproj", "{E46172B9-325C-4EDB-A995-75C8FFAF089B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPrototype.Shared", "ServerPrototype.Shared\ServerPrototype.Shared.csproj", "{A213C74D-9435-49AF-8976-7F21C9F8FAC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerPrototype.Shared", "ServerPrototype.Shared\ServerPrototype.Shared.csproj", "{A213C74D-9435-49AF-8976-7F21C9F8FAC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPrototype.Core", "ServerPrototype.Core\ServerPrototype.Core.csproj", "{46C10361-2220-4CE8-8F8F-7CCFFB195A23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{A213C74D-9435-49AF-8976-7F21C9F8FAC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A213C74D-9435-49AF-8976-7F21C9F8FAC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A213C74D-9435-49AF-8976-7F21C9F8FAC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46C10361-2220-4CE8-8F8F-7CCFFB195A23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46C10361-2220-4CE8-8F8F-7CCFFB195A23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46C10361-2220-4CE8-8F8F-7CCFFB195A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46C10361-2220-4CE8-8F8F-7CCFFB195A23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
