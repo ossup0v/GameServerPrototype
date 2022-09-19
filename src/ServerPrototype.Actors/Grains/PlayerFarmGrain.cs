@@ -30,19 +30,19 @@ namespace ServerPrototype.Actors.Grains
             return base.OnActivateAsync();
         }
 
-        public async Task<ApiResult> StartBuildConstruction(StartBuildRequest request)
+        public async Task<ApiResult<int>> StartBuildConstruction(StartBuildRequest request)
         {
             //TODO check is other construction is building
             if (_field.ContainsKey(request.Point))
-                return ApiResult.BadRequest;
+                return ApiResult<int>.BadRequest();
 
             if (!ContentProvider.Instance.GetFarmConstructions().TryGetValue(request.ConstructionId, out var construction))
-                return ApiResult.BadRequest;
+                return ApiResult<int>.BadRequest();
 
             if (!construction.Levels.TryGetValue(request.Level, out var level))
             {
                 _logger.LogError($"Can find level {request.Level} in construction {request.ConstructionId}");
-                return ApiResult.BadRequest;
+                return ApiResult<int>.BadRequest();
             }
 
             level.Point = request.Point;
@@ -51,7 +51,7 @@ namespace ServerPrototype.Actors.Grains
             _logger.LogInformation($"Construction {construction.Id} level {level.Level} builded at {level.Point}");
             //add timer here & return remain time span
 
-            return ApiResult.OK;
+            return ApiResult<int>.OK(level.ConstructTimeSec);
         }
 
         private async Task SetConstruction(FarmConstructionLevel level)

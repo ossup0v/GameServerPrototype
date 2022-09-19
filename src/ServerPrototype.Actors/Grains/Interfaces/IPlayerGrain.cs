@@ -8,7 +8,7 @@ namespace ServerPrototype.Actors.Grains.Interfaces
     public interface IPlayerGrain : IGrainWithStringKey
     {
         Task<ApiResult<PlayerData>> GetPlayerData();
-        Task<ApiResult> StartBuildConstruction(StartBuildRequest request);
+        Task<ApiResult<int>> StartBuildConstruction(StartBuildRequest request);
         Task EndSeason();
         Task LoginNotify();
     }

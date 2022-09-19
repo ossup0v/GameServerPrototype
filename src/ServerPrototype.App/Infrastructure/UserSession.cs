@@ -15,7 +15,6 @@ using System.Net;
 
 namespace ServerPrototype.App.Infrastructure
 {
-
     public class UserSession : TcpSession
     {
         private IClusterClient _cluster;
@@ -197,13 +196,16 @@ namespace ServerPrototype.App.Infrastructure
             try
             {
                 var playerGrain = _cluster.GetGrain<IPlayerGrain>(_userId);
-                var playerData = await playerGrain.StartBuildConstruction(new StartBuildRequest(p.Point, p.ConstructionId, 1));
+                var response = await playerGrain.StartBuildConstruction(new StartBuildRequest(p.Point, p.ConstructionId, 1));
 
-                if (playerData.Status != HttpStatusCode.OK)
+                if (response.Status != HttpStatusCode.OK)
                 {
-                    _log.LogError($"Can't build farm construction. Message: {playerData.Message}");
+                    _log.LogError($"Can't build farm construction. Message: {response.Message}");
+                    SendGenericError($"Can't build farm construction. Message: {response.Message}");
                     return;
                 }
+
+                SendMessage(new StartBuildFarmConstructionResponsePacket() { BuildDurationSecond = response.Value });
             }
             catch (Exception e)
             {

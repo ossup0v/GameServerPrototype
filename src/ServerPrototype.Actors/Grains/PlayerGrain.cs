@@ -86,21 +86,22 @@ namespace ServerPrototype.Actors.Grains
             return Task.CompletedTask;
         }
 
-        public async Task<ApiResult> StartBuildConstruction(StartBuildRequest request)
+        public async Task<ApiResult<int>> StartBuildConstruction(StartBuildRequest request)
         {
             _logger.LogInformation("Trying to start build construction in farm grain, request {@request}", request);
             //get find construction from static info
-            if (!ContentProvider.Instance.GetFarmConstructions().TryGetValue(request.ConstructionId, out var construction))
-                return ApiResult.BadRequest;
+            if (!ContentProvider.Instance.GetFarmConstructions()
+                    .TryGetValue(request.ConstructionId, out var construction))
+                return ApiResult<int>.BadRequest();
 
             if (!construction.Levels.TryGetValue(request.Level, out var level))
             {
                 _logger.LogError($"Can find level {request.Level} in construction {request.ConstructionId}");
-                return ApiResult.BadRequest;
+                return ApiResult<int>.BadRequest();
             }
             //check resources enough
             if (!CheckResourceRequirements(level.ResourceRequirements))
-                return ApiResult.InternalError;
+                return ApiResult<int>.InternalError();
 
             //recalculate resources, add rss before bonus start work
             await AddResources();
@@ -119,7 +120,7 @@ namespace ServerPrototype.Actors.Grains
             if (decreaseResult is not true)
             {
                 _logger.LogError("StartBuildConstruction check requirements passed, but can't decrease resources");
-                return ApiResult.InternalError;
+                return ApiResult<int>.InternalError();
             }
 
             return result;
