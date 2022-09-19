@@ -35,10 +35,10 @@ namespace ServerPrototype.Actors.Grains
 
         protected override async Task Init()
         {
-            await InitFirstLogin();
-
             await AddComponent(new InventoryComponent(_serviceProvider.GetRequiredService<IPlayerInventoryDb>()), State.Id);
             await AddComponent(new EffectContainerComponent(_serviceProvider.GetRequiredService<IPlayerEffectsDb>()), State.Id);
+
+            await InitFirstLogin();
 
             State.PlayerData.LastLogin = DateTime.UtcNow;
 
@@ -93,9 +93,13 @@ namespace ServerPrototype.Actors.Grains
             if (!ContentProvider.Instance.GetFarmConstructions().TryGetValue(request.ConstructionId, out var construction))
                 return ApiResult.BadRequest;
 
+            if (!construction.Levels.TryGetValue(request.Level, out var level))
+            {
+                _logger.LogError($"Can find level {request.Level} in construction {request.ConstructionId}");
+                return ApiResult.BadRequest;
+            }
             //check resources enough
-            var firstLevel = construction.FirstLevel;
-            if (!CheckResourceRequirements(firstLevel.ResourceRequirements))
+            if (!CheckResourceRequirements(level.ResourceRequirements))
                 return ApiResult.InternalError;
 
             //recalculate resources, add rss before bonus start work
@@ -109,9 +113,9 @@ namespace ServerPrototype.Actors.Grains
                 return result;
 
             // TODO move it in BuildConstructionComplited
-            await AddEffects(firstLevel.Effects);
+            await AddEffects(level.Effects);
 
-            var decreaseResult = await TryDescreaseResources(firstLevel.ResourceToSpend);
+            var decreaseResult = await TryDescreaseResources(level.ResourceToSpend);
             if (decreaseResult is not true)
             {
                 _logger.LogError("StartBuildConstruction check requirements passed, but can't decrease resources");
@@ -124,7 +128,9 @@ namespace ServerPrototype.Actors.Grains
         private async Task AddResources()
         {
             var inventory = GetComponent<InventoryComponent>();
+
             _logger.LogDebug("before add resources to player {@player_id} {@resources}", State.Id, inventory.Resources);
+
             var resourcesToAdd = ResourceProductionCalculator.GetResourceAmountToReceive(
                 State.LastResourceIncomeTime.Value,
                 await GetResourcesProductionBase(),
@@ -171,7 +177,6 @@ namespace ServerPrototype.Actors.Grains
             await effectsContainer.SaveChanges();
         }
 
-        ///TODO get it from <see cref="IPlayerFarmGrain"/>
         private Task<Dictionary<ResourceType, ulong>> GetResourcesProductionBase()
         {
             var farmGrain = GrainFactory.GetGrain<IPlayerFarmGrain>(GetPlayerFarmActorId());

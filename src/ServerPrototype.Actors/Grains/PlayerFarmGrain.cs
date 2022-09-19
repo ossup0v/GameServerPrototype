@@ -1,4 +1,5 @@
-﻿using Orleans;
+﻿using Microsoft.Extensions.Logging;
+using Orleans;
 using ServerPrototype.Actors.Grains.Interfaces;
 using ServerPrototype.Actors.Grains.Messages.Requests;
 using ServerPrototype.Common;
@@ -12,11 +13,16 @@ namespace ServerPrototype.Actors.Grains
     {
         public class PlayerFramState
         {
-            public List<FarmConstruction> Field { get; set; } = new ();
+            public List<FarmConstructionLevel> Field { get; set; } = new ();
         }
         
         //TODO research how to save Point as Dictionary key in mongo
-        private Dictionary<Point, FarmConstruction> _field { get; set; } = new ();
+        private Dictionary<Point, FarmConstructionLevel> _field { get; set; } = new ();
+        private readonly ILogger<PlayerFarmGrain> _logger;
+        public PlayerFarmGrain(ILogger<PlayerFarmGrain> logger, IServiceProvider serviceProvider)
+        {
+            _logger = logger;
+        }
 
         public override Task OnActivateAsync()
         {
@@ -27,26 +33,31 @@ namespace ServerPrototype.Actors.Grains
         public async Task<ApiResult> StartBuildConstruction(StartBuildRequest request)
         {
             //TODO check is other construction is building
-
             if (_field.ContainsKey(request.Point))
                 return ApiResult.BadRequest;
 
             if (!ContentProvider.Instance.GetFarmConstructions().TryGetValue(request.ConstructionId, out var construction))
                 return ApiResult.BadRequest;
 
-            construction.Point = request.Point;
-            construction.CurrentLevel = construction.Levels.Keys.Min();
+            if (!construction.Levels.TryGetValue(request.Level, out var level))
+            {
+                _logger.LogError($"Can find level {request.Level} in construction {request.ConstructionId}");
+                return ApiResult.BadRequest;
+            }
 
-            await SetConstruction(construction);
+            level.Point = request.Point;
+
+            await SetConstruction(level);
+            _logger.LogInformation($"Construction {construction.Id} level {level.Level} builded at {level.Point}");
             //add timer here & return remain time span
 
             return ApiResult.OK;
         }
 
-        private async Task SetConstruction(FarmConstruction farmConstruction)
+        private async Task SetConstruction(FarmConstructionLevel level)
         {
-            State.Field.Add(farmConstruction);
-            _field.Add(farmConstruction.Point, farmConstruction);
+            State.Field.Add(level);
+            _field.Add(level.Point, level);
 
             await WriteStateAsync();
         }
@@ -54,9 +65,8 @@ namespace ServerPrototype.Actors.Grains
         public Task<Dictionary<ResourceType, ulong>> GetResourceProducrion()
         {
             var result = new Dictionary<ResourceType, ulong>();
-            foreach (var construction in _field.Values)
+            foreach (var level in _field.Values)
             {
-                var level = construction.Levels[construction.CurrentLevel];
                 foreach (var resources in level.ProductionResources)
                 {
                     if (!result.ContainsKey(resources.Key))

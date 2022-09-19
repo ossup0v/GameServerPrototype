@@ -7,10 +7,10 @@ namespace ServerPrototype.Core.Components
     public class EffectContainerComponent : ComponentBase
     {
         private Dictionary<EffectType, Effect> _effects;
-        private readonly IPlayerEffectsDb _effectsDb;
+        private readonly IEffectsDb _effectsDb;
         public Dictionary<EffectType, Effect> Effects => _effects;
 
-        public EffectContainerComponent(IPlayerEffectsDb effectsDb)
+        public EffectContainerComponent(IEffectsDb effectsDb)
         {
             _effectsDb = effectsDb;
         }

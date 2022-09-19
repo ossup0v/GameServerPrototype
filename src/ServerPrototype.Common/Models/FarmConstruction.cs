@@ -5,8 +5,6 @@ namespace ServerPrototype.Common.Models
     public class FarmConstruction
     {
         public int Id { get; set; }
-        public Point Point { get; set; }
-        public int CurrentLevel { get; set; }
         public Dictionary<int, FarmConstructionLevel> Levels { get; set; }
         public FarmConstructionLevel FirstLevel => Levels[Levels.Keys.Min()];
     }
@@ -21,6 +19,7 @@ namespace ServerPrototype.Common.Models
         public Dictionary<ResourceType, ulong> ProductionResources { get; set; }
         public int ConstructTimeSec { get; set; }
         public string Asset { get; set; }
+        public Point Point { get; set; }
 
         public FarmConstructionLevel(int level, List<Effect> effects, List<ResourceRequirement> resourceRequirements, Dictionary<ResourceType, ulong> productionResources, int constructTimeSec, string asset)
         {

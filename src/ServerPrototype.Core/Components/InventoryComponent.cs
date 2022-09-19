@@ -7,10 +7,10 @@ namespace ServerPrototype.Core.Components
     public class InventoryComponent : ComponentBase
     {
         private Dictionary<ResourceType, ulong> _resources;
-        private readonly IPlayerInventoryDb _inventoryDb;
+        private readonly IInventoryDb _inventoryDb;
         public IReadOnlyDictionary<ResourceType, ulong> Resources => _resources;
 
-        public InventoryComponent(IPlayerInventoryDb inventoryDb)
+        public InventoryComponent(IInventoryDb inventoryDb)
         {
             _inventoryDb = inventoryDb;
         }

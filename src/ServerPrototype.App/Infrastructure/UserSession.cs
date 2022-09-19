@@ -197,7 +197,7 @@ namespace ServerPrototype.App.Infrastructure
             try
             {
                 var playerGrain = _cluster.GetGrain<IPlayerGrain>(_userId);
-                var playerData = await playerGrain.StartBuildConstruction(new StartBuildRequest(p.Point, p.ConstructionId));
+                var playerData = await playerGrain.StartBuildConstruction(new StartBuildRequest(p.Point, p.ConstructionId, 1));
 
                 if (playerData.Status != HttpStatusCode.OK)
                 {
