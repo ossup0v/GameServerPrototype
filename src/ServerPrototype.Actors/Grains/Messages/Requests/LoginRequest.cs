@@ -1,6 +1,6 @@
 ﻿using Orleans.Concurrency;
 
-namespace ServerPrototype.Interfaces.Messages.Requests
+namespace ServerPrototype.Actors.Grains.Messages.Requests
 {
     [Immutable]
     public sealed class LoginRequest

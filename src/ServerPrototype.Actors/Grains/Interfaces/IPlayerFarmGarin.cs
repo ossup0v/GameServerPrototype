@@ -1,6 +1,8 @@
 ﻿using Orleans;
+using ServerPrototype.Actors.Grains.Messages.Requests;
+using ServerPrototype.Common;
 
-namespace ServerPrototype.Interfaces.Grains
+namespace ServerPrototype.Actors.Grains.Interfaces
 {
     public interface IPlayerFarmGrain : IGrainWithStringKey
     {

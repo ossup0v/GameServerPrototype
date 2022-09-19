@@ -2,7 +2,6 @@
 using App.Metrics.Timer;
 using App.Metrics;
 using Microsoft.Extensions.ObjectPool;
-using ServerPrototype.Interfaces.Infrastructure;
 
 namespace ServerPrototype.App.Infrastructure
 {

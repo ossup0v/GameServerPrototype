@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Runtime;
-using ServerPrototype.Interfaces;
-using ServerPrototype.Interfaces.Grains;
-using ServerPrototype.Interfaces.Messages.Requests;
+using ServerPrototype.Actors.Grains.Interfaces;
+using ServerPrototype.Actors.Grains.Messages.Requests;
+using ServerPrototype.Common;
 
 namespace ServerPrototype.Actors.Grains
 {

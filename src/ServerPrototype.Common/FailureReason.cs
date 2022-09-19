@@ -1,4 +1,4 @@
-﻿namespace ServerPrototype.Interfaces
+﻿namespace ServerPrototype.Common
 {
     public enum FailureReason
     {

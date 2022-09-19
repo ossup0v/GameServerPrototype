@@ -1,6 +1,6 @@
 ﻿using App.Metrics;
 
-namespace ServerPrototype.Interfaces.Infrastructure
+namespace ServerPrototype.App.Infrastructure
 {
     public interface IMetricsUpdater
     {

@@ -1,7 +1,7 @@
 ﻿using Orleans.Concurrency;
 using System.Net;
 
-namespace ServerPrototype.Interfaces
+namespace ServerPrototype.Common
 {
     [Immutable]
     public class ApiResult

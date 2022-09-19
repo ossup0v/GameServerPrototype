@@ -1,18 +1,13 @@
 ﻿using App.Metrics;
 using App.Metrics.Counter;
 using App.Metrics.Timer;
-using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.ObjectPool;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Options;
-using Newtonsoft.Json;
-using ServerPrototype.Actors.Grains;
 using ServerPrototype.App.Configs;
 using ServerPrototype.App.Infrastructure;
-using ServerPrototype.Interfaces.Grains;
-using ServerPrototype.Interfaces.Infrastructure;
-using System.Reflection;
+using ServerPrototype.DAL.Api;
+using ServerPrototype.DAL.Configs;
+using ServerPrototype.DAL.Implementation;
 using System.Text.Json.Serialization;
 
 namespace ServerPrototype.App
@@ -67,6 +62,8 @@ namespace ServerPrototype.App
 
             services.AddSingleton<IMetricsUpdater, AppMetricsProxy>();
             services.AddSingleton<IApiGameServer, ApiGameServer>();
+            services.AddSingleton<IPlayerInventoryDb, PlayerInventoryDb>();
+            services.AddSingleton<IPlayerEffectsDb, PlayerEffectsDb>();
 
             //services.AddSingleton<IMongoDatabase>(provider =>
             //{
@@ -101,6 +98,8 @@ namespace ServerPrototype.App
 
 
             services.Configure<ApiServerOptions>(Configuration.GetSection("Server"));
+            services.Configure<PlayerInventoryDbConfig>(Configuration.GetSection("PlayerInventoryDb"));
+            services.Configure<PlayerEffectDbConfig>(Configuration.GetSection("PlayerEffectDb"));
 
             //add here new profiles from AutoMapper 
             services.AddAutoMapper(config =>

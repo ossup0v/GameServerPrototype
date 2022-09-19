@@ -37,7 +37,7 @@
     <ProjectReference Include="..\ServerPrototype.Actors\ServerPrototype.Actors.csproj" />
     <ProjectReference Include="..\ServerPrototype.Common.Networking\ServerPrototype.Common.Networking.csproj" />
     <ProjectReference Include="..\ServerPrototype.Common\ServerPrototype.Common.csproj" />
-    <ProjectReference Include="..\ServerPrototype.Interfaces\ServerPrototype.Interfaces.csproj" />
+    <ProjectReference Include="..\ServerPrototype.DAL\ServerPrototype.DAL.csproj" />
     <ProjectReference Include="..\ServerPrototype.Shared\ServerPrototype.Shared.csproj" />
   </ItemGroup>
 

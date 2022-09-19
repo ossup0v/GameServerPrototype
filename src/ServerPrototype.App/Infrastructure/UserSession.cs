@@ -3,10 +3,9 @@ using AutoMapper;
 using MessagePack;
 using Orleans;
 using Orleans.Streams;
+using ServerPrototype.Actors.Grains.Interfaces;
+using ServerPrototype.Actors.Grains.Messages.Requests;
 using ServerPrototype.Common.Networking;
-using ServerPrototype.Interfaces.Grains;
-using ServerPrototype.Interfaces.Infrastructure;
-using ServerPrototype.Interfaces.Messages.Requests;
 using ServerPrototype.Shared;
 using ServerPrototype.Shared.Packets.ClientToServer;
 using ServerPrototype.Shared.Packets.ServerToClient;
@@ -25,7 +24,6 @@ namespace ServerPrototype.App.Infrastructure
         private Pipe _pipe;
         private CancellationTokenSource _closeTcs;
         private string _userId;
-        private Guid _roomId;
         private IMetricsUpdater _metrics;
         private string _nickname;
         private IAsyncStream<IServerToClientPacket> _personalNotificationsStream;
@@ -194,7 +192,7 @@ namespace ServerPrototype.App.Infrastructure
 
         private async Task OnStartBuildFarmConstruction(StartBuildFarmConstructionPacket p)
         {
-            using var _ = _log.WithScope(("session_id", Id), ("user_id", _userId));
+            //using var _ = _log.WithScope(("session_id", Id), ("user_id", _userId));
 
             try
             {
@@ -267,7 +265,6 @@ namespace ServerPrototype.App.Infrastructure
             _log = provider.GetService<ILogger<UserSession>>();
             _closeTcs = new CancellationTokenSource();
             _metrics = provider.GetRequiredService<IMetricsUpdater>();
-            _roomId = Guid.Empty;
             _nickname = string.Empty;
             _mapper = provider.GetRequiredService<IMapper>();
 

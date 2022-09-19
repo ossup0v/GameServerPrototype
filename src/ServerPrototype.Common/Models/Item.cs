@@ -1,4 +1,4 @@
-﻿namespace ServerPrototype.Core.Models
+﻿namespace ServerPrototype.Common.Models
 {
     public class Item
     {

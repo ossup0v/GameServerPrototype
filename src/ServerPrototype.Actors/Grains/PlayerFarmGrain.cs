@@ -1,11 +1,9 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson.Serialization.Options;
-using Orleans;
-using Orleans.CodeGeneration;
+﻿using Orleans;
+using ServerPrototype.Actors.Grains.Interfaces;
+using ServerPrototype.Actors.Grains.Messages.Requests;
+using ServerPrototype.Common;
+using ServerPrototype.Common.Models;
 using ServerPrototype.Core.Data;
-using ServerPrototype.Core.Models;
-using ServerPrototype.Interfaces;
-using ServerPrototype.Interfaces.Grains;
 using ServerPrototype.Shared;
 
 namespace ServerPrototype.Actors.Grains
@@ -14,11 +12,7 @@ namespace ServerPrototype.Actors.Grains
     {
         public class PlayerFramState
         {
-            //[BsonDictionaryOptions(DictionaryRepresentation.Document)]
-            //[Serializer(typeof)]
-            //public Dictionary<Point, FarmConstruction> Field { get; set; } = new Dictionary<Point, FarmConstruction>();
             public List<FarmConstruction> Field { get; set; } = new ();
-
         }
         
         private Dictionary<Point, FarmConstruction> _field { get; set; } = new ();
