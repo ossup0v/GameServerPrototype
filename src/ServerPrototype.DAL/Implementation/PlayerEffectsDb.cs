@@ -17,12 +17,12 @@ namespace ServerPrototype.DAL.Implementation
             _inventory = db.GetCollection<EffectEntity>(config.Value.CollectionName);
         }
 
-        public async Task<Dictionary<EffectKind, Effect>> GetEffects(string owner)
+        public async Task<Dictionary<EffectType, Effect>> GetEffects(string owner)
         {
-            return (await _inventory.FindAsync(x => x.Id == owner)).FirstOrDefault()?.Effects ?? new Dictionary<EffectKind, Effect>();
+            return (await _inventory.FindAsync(x => x.Id == owner)).FirstOrDefault()?.Effects ?? new Dictionary<EffectType, Effect>();
         }
 
-        public Task SaveEffects(Dictionary<EffectKind, Effect> effects, string owner)
+        public Task SaveEffects(Dictionary<EffectType, Effect> effects, string owner)
         {
             return _inventory.ReplaceOneAsync(x => x.Id == owner, new EffectEntity { Id = owner, Effects = effects }, new ReplaceOptions { IsUpsert = true });
         }

@@ -1,13 +1,14 @@
 ﻿using ServerPrototype.Common.Models;
 using ServerPrototype.DAL.Api;
+using ServerPrototype.Shared;
 
 namespace ServerPrototype.Core.Components
 {
     public class EffectContainerComponent : ComponentBase
     {
-        private Dictionary<EffectKind, Effect> _effects;
+        private Dictionary<EffectType, Effect> _effects;
         private readonly IPlayerEffectsDb _effectsDb;
-        public Dictionary<EffectKind, Effect> Effects => _effects;
+        public Dictionary<EffectType, Effect> Effects => _effects;
 
         public EffectContainerComponent(IPlayerEffectsDb effectsDb)
         {
@@ -17,10 +18,10 @@ namespace ServerPrototype.Core.Components
         public override async Task Init(string owner)
         {
             _effects = await _effectsDb.GetEffects(owner);
-           await base.Init(owner);
+            await base.Init(owner);
         }
 
-        public double GetAggregatedEffect(EffectKind kind)
+        public double GetAggregatedEffect(EffectType kind)
         {
             double boost = 1;
 
@@ -28,6 +29,25 @@ namespace ServerPrototype.Core.Components
                 boost = effect.BoostPrecent;
 
             return boost;
+        }
+
+        public Dictionary<ResourceType, double> GetAggregatedResourceProductionEffects()
+        {
+            var result = new Dictionary<ResourceType, double>();
+
+            foreach (var effect in _effects)
+            {
+                if (effect.Value is ResourceProductionEffect resourceProductionEffect)
+                {
+                    if (!result.ContainsKey(resourceProductionEffect.Resource))
+                    {
+                        result.Add(resourceProductionEffect.Resource, 0D);
+                    }
+                    result[resourceProductionEffect.Resource] += resourceProductionEffect.BoostPrecent;
+                }
+            }
+
+            return result;
         }
 
         public void AddEffect(Effect effect)

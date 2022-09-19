@@ -18,11 +18,12 @@ namespace ServerPrototype.Actors.Grains
     {
         public class PlayerGrainState
         {
+            public bool IsNotFirstLogin { get; set; }
             public string Id { get; set; }
             public DateTime? LastResourceIncomeTime { get; set; }
             public PlayerData PlayerData { get; set; }
         }
-        
+
         private readonly ILogger<PlayerGrain> _logger;
         private readonly IServiceProvider _serviceProvider;
 
@@ -32,8 +33,23 @@ namespace ServerPrototype.Actors.Grains
             _serviceProvider = serviceProvider;
         }
 
-        protected override Task Init()
+        protected override async Task Init()
         {
+            await InitFirstLogin();
+
+            await AddComponent(new InventoryComponent(_serviceProvider.GetRequiredService<IPlayerInventoryDb>()), State.Id);
+            await AddComponent(new EffectContainerComponent(_serviceProvider.GetRequiredService<IPlayerEffectsDb>()), State.Id);
+
+            State.PlayerData.LastLogin = DateTime.UtcNow;
+
+            await WriteStateAsync();
+        }
+
+        private async Task InitFirstLogin()
+        {
+            if (State.IsNotFirstLogin)
+                return;
+
             State.LastResourceIncomeTime ??= DateTime.UtcNow; //for first login
             State.PlayerData ??= new PlayerData
             {
@@ -44,10 +60,15 @@ namespace ServerPrototype.Actors.Grains
 
             State.Id ??= GrainReference.GetPrimaryKeyString();
 
-            AddComponent(new InventoryComponent(_serviceProvider.GetRequiredService<IPlayerInventoryDb>()), State.Id);
-            AddComponent(new EffectContainerComponent(_serviceProvider.GetRequiredService<IPlayerEffectsDb>()), State.Id);
+            var inventory = GetComponent<InventoryComponent>();
 
-            return Task.CompletedTask;
+            foreach (var resource in await ContentProvider.Instance.GetFirstLoginResources())
+                inventory.IncreaseResource(resource.Key, resource.Value);
+
+            await inventory.SaveChanges();
+            await WriteStateAsync();
+
+            State.IsNotFirstLogin = true;
         }
 
         public Task EndSeason()
@@ -68,14 +89,12 @@ namespace ServerPrototype.Actors.Grains
         public async Task<ApiResult> StartBuildConstruction(StartBuildRequest request)
         {
             _logger.LogInformation("Trying to start build construction in farm grain, request {@request}", request);
-            //TODO
             //get find construction from static info
             if (!ContentProvider.Instance.GetFarmConstructions().TryGetValue(request.ConstructionId, out var construction))
                 return ApiResult.BadRequest;
-            
+
             //check resources enough
-            //todo check is other construction is building
-            var firstLevel = construction.Levels[construction.Levels.Keys.Min()];
+            var firstLevel = construction.FirstLevel;
             if (!CheckResourceRequirements(firstLevel.ResourceRequirements))
                 return ApiResult.InternalError;
 
@@ -89,12 +108,15 @@ namespace ServerPrototype.Actors.Grains
             if (result.IsFailed)
                 return result;
 
-            var effects = GetComponent<EffectContainerComponent>();
+            // TODO move it in BuildConstructionComplited
+            await AddEffects(firstLevel.Effects);
 
-            foreach (var effect in firstLevel.Effects)
-                effects.AddEffect(effect);
-
-            await effects.SaveChanges();
+            var decreaseResult = await TryDescreaseResources(firstLevel.ResourceToSpend);
+            if (decreaseResult is not true)
+            {
+                _logger.LogError("StartBuildConstruction check requirements passed, but can't decrease resources");
+                return ApiResult.InternalError;
+            }
 
             return result;
         }
@@ -103,16 +125,15 @@ namespace ServerPrototype.Actors.Grains
         {
             var inventory = GetComponent<InventoryComponent>();
             _logger.LogDebug("before add resources to player {@player_id} {@resources}", State.Id, inventory.Resources);
-            var resourcesToAdd = ResourceProfitCalculator.GetResourceAmountToReceive(
+            var resourcesToAdd = ResourceProductionCalculator.GetResourceAmountToReceive(
                 State.LastResourceIncomeTime.Value,
-                await GetResourcesMinigBasePerSec(),
-                await GetResourcesMinigBoosts(),
+                await GetResourcesProductionBase(),
+                GetResourcesProductionBoosts(),
                 _logger);
 
-            
+
             foreach (var resToAdd in resourcesToAdd)
                 inventory.IncreaseResource(resToAdd.Key, resToAdd.Value);
-            
 
             _logger.LogDebug("after add resources to player {@player_id} {@resources}", State.Id, inventory.Resources);
 
@@ -121,25 +142,47 @@ namespace ServerPrototype.Actors.Grains
             await inventory.SaveChanges();
         }
 
-        ///TODO get it from <see cref="IPlayerFarmGrain"/>
-        private Task<Dictionary<int, ulong>> GetResourcesMinigBasePerSec()
+        private async Task<bool> TryDescreaseResources(Dictionary<ResourceType, ulong> resources)
         {
-            return Task.FromResult(new Dictionary<int, ulong>
-            {
-                [1] = 100,
-                [2] = 200,
-                [3] = 300,
-            });
+            await AddResources();
+            var inventory = GetComponent<InventoryComponent>();
+            _logger.LogDebug("before decrease resources from player {@player_id} {@resources}", State.Id, inventory.Resources);
+
+
+            if (inventory.TryDescreaseResource(resources) is not true)
+                return false;
+
+            _logger.LogDebug("after decrease resources from player {@player_id} {@resources}", State.Id, inventory.Resources);
+
+            State.LastResourceIncomeTime = DateTime.UtcNow;
+            await WriteStateAsync();
+            await inventory.SaveChanges();
+
+            return true;
         }
 
-        private Task<Dictionary<int, decimal>> GetResourcesMinigBoosts()
+        private async Task AddEffects(List<Effect> effects)
         {
-            return Task.FromResult(new Dictionary<int, decimal>
-            {
-                [1] = 0.3M,
-                [2] = 0.6M,
-                [3] = 0.9M,
-            });
+            var effectsContainer = GetComponent<EffectContainerComponent>();
+
+            foreach (var effect in effects)
+                effectsContainer.AddEffect(effect);
+
+            await effectsContainer.SaveChanges();
+        }
+
+        ///TODO get it from <see cref="IPlayerFarmGrain"/>
+        private Task<Dictionary<ResourceType, ulong>> GetResourcesProductionBase()
+        {
+            var farmGrain = GrainFactory.GetGrain<IPlayerFarmGrain>(GetPlayerFarmActorId());
+
+            return farmGrain.GetResourceProducrion();
+        }
+
+        private Dictionary<ResourceType, double> GetResourcesProductionBoosts()
+        {
+            var effects = GetComponent<EffectContainerComponent>();
+            return effects.GetAggregatedResourceProductionEffects();
         }
 
         private string GetPlayerFarmActorId()
@@ -153,7 +196,7 @@ namespace ServerPrototype.Actors.Grains
             var inventory = GetComponent<InventoryComponent>();
             foreach (var requirement in requirements)
             {
-                if(!inventory.CheckIsEnough(requirement.ResourceId, requirement.RequirementAmountOfResource))
+                if (!inventory.CheckResourceIsEnough(requirement.Resource, requirement.RequirementAmountOfResource))
                     return false;
             }
 

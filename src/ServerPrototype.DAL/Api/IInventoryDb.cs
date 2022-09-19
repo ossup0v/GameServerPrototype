@@ -1,9 +1,11 @@
-﻿namespace ServerPrototype.DAL.Api
+﻿using ServerPrototype.Shared;
+
+namespace ServerPrototype.DAL.Api
 {
     public interface IInventoryDb
     {
-        Task<Dictionary<int, ulong>> GetResources(string owner);
-        Task SaveResources(Dictionary<int, ulong> resources, string owner);
+        Task<Dictionary<ResourceType, ulong>> GetResources(string owner);
+        Task SaveResources(Dictionary<ResourceType, ulong> resources, string owner);
     }
 
     public interface IPlayerInventoryDb : IInventoryDb

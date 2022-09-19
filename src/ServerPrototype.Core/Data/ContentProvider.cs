@@ -1,4 +1,5 @@
 ﻿using ServerPrototype.Common.Models;
+using ServerPrototype.Shared;
 
 namespace ServerPrototype.Core.Data
 {
@@ -17,69 +18,98 @@ namespace ServerPrototype.Core.Data
                         Id = 0,
                         Levels = new Dictionary<int, FarmConstructionLevel>
                         {
-                            [1] = new FarmConstructionLevel
-                            {
-                                Level = 1,
-                                Effects = new List<Effect> { new Effect { Kind = EffectKind.ResourceProduction, BoostPrecent = 0.2 } },
-                                ResourceRequirements = new List<ResourceRequirement> { new ResourceRequirement { ResourceId = 1, RequirementAmountOfResource = 100 } },
-                                ProductionResources = new Dictionary<int, ulong>
+                            [1] = new FarmConstructionLevel(1, 
+                            new List<Effect>
                                 {
-                                    [1] = 100,
-                                    [2] = 100
+                                    new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 }
+                                }, 
+                            new List<ResourceRequirement>
+                                {
+                                    new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 }
                                 },
-                                ConstructTimeSec = 3,
+                            new Dictionary<ResourceType, ulong>
+                                {
+                                    [ResourceType.Wood] = 100,
+                                    [ResourceType.Stone] = 100
+                                }, 
+                            3, 
+                            string.Empty),
+                            [2] = new FarmConstructionLevel(2,
+                            new List<Effect>
+                                {
+                                    new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 },
+                                    new ResourceProductionEffect { Resource = ResourceType.Metal, BoostPrecent = 0.2 },
+                                },
+                            new List<ResourceRequirement>
+                                {
+                                    new ResourceRequirement { Resource = ResourceType.Food, RequirementAmountOfResource = 100 },
+                                    new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 },
+                                },
+                            new Dictionary<ResourceType, ulong>
+                            {
+                                [ResourceType.Wood] = 200,
+                                [ResourceType.Stone] = 200
                             },
-                            [2] = new FarmConstructionLevel
-                            {
-                                Level = 2,
-                                Effects = new List<Effect> { new Effect { Kind = EffectKind.ResourceProduction, BoostPrecent = 0.4 } },
-                                ProductionResources = new Dictionary<int, ulong>
-                                {
-                                    [1] = 300,
-                                    [2] = 300
-                                },
-                                ResourceRequirements = new List<ResourceRequirement>
-                                {
-                                    new ResourceRequirement { ResourceId = 1, RequirementAmountOfResource = 1000},
-                                    new ResourceRequirement { ResourceId = 2, RequirementAmountOfResource = 1000}
-                                },
-                                ConstructTimeSec = 5
-                            }
+                            5,
+                            string.Empty)
                         }
                     },
 
                 [1] =
                     new FarmConstruction
                     {
-                        Id = 0,
+                        Id = 1,
                         Levels = new Dictionary<int, FarmConstructionLevel>
                         {
-                            [1] = new FarmConstructionLevel
+                            [1] = new FarmConstructionLevel(1,
+                            new List<Effect>
+                                {
+                                    new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 }
+                                },
+                            new List<ResourceRequirement>
+                                {
+                                    new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 }
+                                },
+                            new Dictionary<ResourceType, ulong>
                             {
-                                Level = 1,
-                                Effects = new List<Effect> { new Effect { Kind = EffectKind.ResourceProduction, BoostPrecent = 0.2 } },
-                                ResourceRequirements = new List<ResourceRequirement> { new ResourceRequirement { ResourceId = 1, RequirementAmountOfResource = 100 } },
-                                ConstructTimeSec = 3,
+                                [ResourceType.Wood] = 100,
+                                [ResourceType.Stone] = 100
                             },
-                            [2] = new FarmConstructionLevel
+                            3,
+                            string.Empty),
+                            [2] = new FarmConstructionLevel(2,
+                            new List<Effect>
+                                {
+                                    new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 },
+                                    new ResourceProductionEffect { Resource = ResourceType.Metal, BoostPrecent = 0.2 },
+                                },
+                            new List<ResourceRequirement>
+                                {
+                                    new ResourceRequirement { Resource = ResourceType.Food, RequirementAmountOfResource = 100 },
+                                    new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 },
+                                },
+                            new Dictionary<ResourceType, ulong>
                             {
-                                Level = 2,
-                                Effects = new List<Effect> { new Effect { Kind = EffectKind.ResourceProduction, BoostPrecent = 0.4 } },
-                                ResourceRequirements = new List<ResourceRequirement>
-                                {
-                                    new ResourceRequirement { ResourceId = 1, RequirementAmountOfResource = 1000},
-                                    new ResourceRequirement { ResourceId = 2, RequirementAmountOfResource = 1000}
-                                },
-                                ProductionResources = new Dictionary<int, ulong>
-                                {
-                                    [1] = 300,
-                                    [2] = 300
-                                },
-                                ConstructTimeSec = 5
-                            }
+                                [ResourceType.Wood] = 200,
+                                [ResourceType.Stone] = 200
+                            },
+                            5,
+                            string.Empty)
                         }
                     },
             };
+        }
+
+        public Task<Dictionary<ResourceType, ulong>> GetFirstLoginResources()
+        {
+            return Task.FromResult(new Dictionary<ResourceType, ulong>
+            {
+                [ResourceType.Metal] = 5000,
+                [ResourceType.Wood] = 5000,
+                [ResourceType.Food] = 5000,
+                [ResourceType.Stone] = 5000,
+                [ResourceType.Silver] = 5000
+            });
         }
     }
 }

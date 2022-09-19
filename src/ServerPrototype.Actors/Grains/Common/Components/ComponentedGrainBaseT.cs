@@ -7,9 +7,9 @@ namespace ServerPrototype.Actors.Grains.Common.Components
     {
         private Dictionary<Type, ComponentBase> _components = new Dictionary<Type, ComponentBase>();
 
-        public override async Task OnActivateAsync()
+        public override Task OnActivateAsync()
         {
-            await Init();
+            return Init();
         }
 
         protected virtual Task Init()

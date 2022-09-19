@@ -15,6 +15,7 @@ namespace ServerPrototype.Actors.Grains
             public List<FarmConstruction> Field { get; set; } = new ();
         }
         
+        //TODO research how to save Point as Dictionary key in mongo
         private Dictionary<Point, FarmConstruction> _field { get; set; } = new ();
 
         public override Task OnActivateAsync()
@@ -25,6 +26,8 @@ namespace ServerPrototype.Actors.Grains
 
         public async Task<ApiResult> StartBuildConstruction(StartBuildRequest request)
         {
+            //TODO check is other construction is building
+
             if (_field.ContainsKey(request.Point))
                 return ApiResult.BadRequest;
 
@@ -32,7 +35,8 @@ namespace ServerPrototype.Actors.Grains
                 return ApiResult.BadRequest;
 
             construction.Point = request.Point;
-            
+            construction.CurrentLevel = construction.Levels.Keys.Min();
+
             await SetConstruction(construction);
             //add timer here & return remain time span
 
@@ -45,6 +49,24 @@ namespace ServerPrototype.Actors.Grains
             _field.Add(farmConstruction.Point, farmConstruction);
 
             await WriteStateAsync();
+        }
+
+        public Task<Dictionary<ResourceType, ulong>> GetResourceProducrion()
+        {
+            var result = new Dictionary<ResourceType, ulong>();
+            foreach (var construction in _field.Values)
+            {
+                var level = construction.Levels[construction.CurrentLevel];
+                foreach (var resources in level.ProductionResources)
+                {
+                    if (!result.ContainsKey(resources.Key))
+                        result.Add(resources.Key, 0UL);
+                 
+                    result[resources.Key] += resources.Value;
+                }
+            }
+
+            return Task.FromResult(result);
         }
     }
 }

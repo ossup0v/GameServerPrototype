@@ -1,6 +1,6 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
+using ServerPrototype.Shared;
 
 namespace ServerPrototype.DAL.Models
 {
@@ -10,6 +10,6 @@ namespace ServerPrototype.DAL.Models
         public string Id { get; set; }
 
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
-        public Dictionary<int, ulong> Resources { get; set; }
+        public Dictionary<ResourceType, ulong> Resources { get; set; }
     }
 }

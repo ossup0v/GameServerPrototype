@@ -11,6 +11,6 @@ namespace ServerPrototype.DAL.Models
         public string Id { get; set; }
 
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
-        public Dictionary<EffectKind, Effect> Effects { get; set; }
+        public Dictionary<EffectType, Effect> Effects { get; set; }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using ServerPrototype.DAL.Api;
+using ServerPrototype.Shared;
+using static MongoDB.Driver.WriteConcern;
 
 namespace ServerPrototype.Core.Components
 {
     public class InventoryComponent : ComponentBase
     {
-        private Dictionary<int, ulong> _resources;
+        private Dictionary<ResourceType, ulong> _resources;
         private readonly IPlayerInventoryDb _inventoryDb;
-        public IReadOnlyDictionary<int, ulong> Resources => _resources;
+        public IReadOnlyDictionary<ResourceType, ulong> Resources => _resources;
 
         public InventoryComponent(IPlayerInventoryDb inventoryDb)
         {
@@ -19,17 +21,17 @@ namespace ServerPrototype.Core.Components
             await base.Init(owner);
         }
 
-        public bool CheckIsEnough(int resourceId, ulong amount)
+        public bool CheckResourceIsEnough(ResourceType resource, ulong amount)
         {
-            return _resources.ContainsKey(resourceId) ? _resources[resourceId] >= amount : false;
+            return _resources.ContainsKey(resource) ? _resources[resource] >= amount : false;
         }
 
-        public void IncreaseResource(int resourceId, ulong amount)
+        public void IncreaseResource(ResourceType resource, ulong amount)
         {
-            if (!_resources.ContainsKey(resourceId))
-                _resources.Add(resourceId, 0UL);
+            if (!_resources.ContainsKey(resource))
+                _resources.Add(resource, 0UL);
 
-            _resources[resourceId] += amount;
+            _resources[resource] += amount;
         }
 
         public Task SaveChanges()
@@ -37,12 +39,24 @@ namespace ServerPrototype.Core.Components
             return _inventoryDb.SaveResources(_resources, Owner);
         }
 
-        public bool TryDescreaseResource(int resourceId, ulong amount)
+        public bool TryDescreaseResource(ResourceType resource, ulong amount)
         {
-            if (CheckIsEnough(resourceId, amount) is false)
+            if (CheckResourceIsEnough(resource, amount) is false)
                 return false;
 
-            _resources[resourceId] -= amount;
+            _resources[resource] -= amount;
+
+            return true;
+        }
+
+        public bool TryDescreaseResource(Dictionary<ResourceType, ulong> resources)
+        {
+            foreach (var (resource, amount) in resources)
+                if (CheckResourceIsEnough(resource, amount) is false)
+                    return false;
+            
+            foreach (var (resource, amount) in resources)
+                _resources[resource] -= amount;
 
             return true;
         }

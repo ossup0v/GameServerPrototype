@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using ServerPrototype.DAL.Api;
 using ServerPrototype.DAL.Configs;
 using ServerPrototype.DAL.Models;
+using ServerPrototype.Shared;
 
 namespace ServerPrototype.DAL.Implementation
 {
@@ -16,13 +17,13 @@ namespace ServerPrototype.DAL.Implementation
             _inventory = db.GetCollection<InventoryEntity>(config.Value.CollectionName);
         }
 
-        public async Task<Dictionary<int, ulong>> GetResources(string owner)
+        public async Task<Dictionary<ResourceType, ulong>> GetResources(string owner)
         {
             try
             {
                 var coursor = await _inventory.FindAsync(x => x.Id == owner);
                 var entity = coursor.FirstOrDefault();
-                return entity?.Resources ?? new Dictionary<int, ulong>();
+                return entity?.Resources ?? new Dictionary<ResourceType, ulong>();
             }
             catch (Exception ex)
             {
@@ -30,7 +31,7 @@ namespace ServerPrototype.DAL.Implementation
             }
         }
 
-        public Task SaveResources(Dictionary<int, ulong> resources, string owner)
+        public Task SaveResources(Dictionary<ResourceType, ulong> resources, string owner)
         {
             return _inventory.ReplaceOneAsync(x => x.Id == owner, new InventoryEntity { Id = owner, Resources = resources }, new ReplaceOptions { IsUpsert = true });
         }

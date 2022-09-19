@@ -192,7 +192,7 @@ namespace ServerPrototype.App.Infrastructure
 
         private async Task OnStartBuildFarmConstruction(StartBuildFarmConstructionPacket p)
         {
-            //using var _ = _log.WithScope(("session_id", Id), ("user_id", _userId));
+            using var _ = _log.WithScope(("session_id", Id), ("user_id", _userId));
 
             try
             {
