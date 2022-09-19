@@ -23,7 +23,7 @@ namespace ServerPrototype.Core.Data
                                 {
                                     new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 }
                                 }, 
-                            new List<ResourceRequirement>
+                            new List<RequirementBase>
                                 {
                                     new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 }
                                 },
@@ -40,7 +40,7 @@ namespace ServerPrototype.Core.Data
                                     new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 },
                                     new ResourceProductionEffect { Resource = ResourceType.Metal, BoostPrecent = 0.2 },
                                 },
-                            new List<ResourceRequirement>
+                            new List<RequirementBase>
                                 {
                                     new ResourceRequirement { Resource = ResourceType.Food, RequirementAmountOfResource = 100 },
                                     new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 },
@@ -66,7 +66,7 @@ namespace ServerPrototype.Core.Data
                                 {
                                     new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 }
                                 },
-                            new List<ResourceRequirement>
+                            new List<RequirementBase>
                                 {
                                     new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 }
                                 },
@@ -83,7 +83,7 @@ namespace ServerPrototype.Core.Data
                                     new ResourceProductionEffect { Resource = ResourceType.Wood, BoostPrecent = 0.2 },
                                     new ResourceProductionEffect { Resource = ResourceType.Metal, BoostPrecent = 0.2 },
                                 },
-                            new List<ResourceRequirement>
+                            new List<RequirementBase>
                                 {
                                     new ResourceRequirement { Resource = ResourceType.Food, RequirementAmountOfResource = 100 },
                                     new ResourceRequirement { Resource = ResourceType.Metal, RequirementAmountOfResource = 100 },

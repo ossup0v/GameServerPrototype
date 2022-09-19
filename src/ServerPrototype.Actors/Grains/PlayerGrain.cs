@@ -14,7 +14,7 @@ using ServerPrototype.Shared;
 
 namespace ServerPrototype.Actors.Grains
 {
-    public class PlayerGrain : ComponentedGrainBase<PlayerGrain.PlayerGrainState>, IPlayerGrain
+    public class PlayerGrain : ComponentedGrainBase<PlayerGrain.PlayerGrainState>, IPlayerGrain, IRequirementContext
     {
         public class PlayerGrainState
         {
@@ -26,6 +26,7 @@ namespace ServerPrototype.Actors.Grains
 
         private readonly ILogger<PlayerGrain> _logger;
         private readonly IServiceProvider _serviceProvider;
+        public IReadOnlyDictionary<ResourceType, ulong> Resources => GetComponent<InventoryComponent>().Resources;
 
         public PlayerGrain(ILogger<PlayerGrain> logger, IServiceProvider serviceProvider)
         {
@@ -100,7 +101,7 @@ namespace ServerPrototype.Actors.Grains
                 return ApiResult<int>.BadRequest();
             }
             //check resources enough
-            if (!CheckResourceRequirements(level.ResourceRequirements))
+            if (!CheckRequirements(level.Requirements))
                 return ApiResult<int>.InternalError();
 
             //recalculate resources, add rss before bonus start work
@@ -196,13 +197,11 @@ namespace ServerPrototype.Actors.Grains
             return $"{State.Id}_farm_1";
         }
 
-#warning TODO rewrite to base requirement!
-        private bool CheckResourceRequirements(List<ResourceRequirement> requirements)
+        private bool CheckRequirements(List<RequirementBase> requirements)
         {
-            var inventory = GetComponent<InventoryComponent>();
             foreach (var requirement in requirements)
             {
-                if (!inventory.CheckResourceIsEnough(requirement.Resource, requirement.RequirementAmountOfResource))
+                if (!requirement.Validate(this))
                     return false;
             }
 
