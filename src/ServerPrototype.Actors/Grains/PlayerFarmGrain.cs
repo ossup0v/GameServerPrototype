@@ -55,12 +55,12 @@ namespace ServerPrototype.Actors.Grains
             return ApiResult<int>.OK(level.ConstructTimeSec);
         }
 
-        private async Task SetConstruction(FarmConstructionLevel level)
+        private Task SetConstruction(FarmConstructionLevel level)
         {
             State.Field.Add(level);
             _field.Add(level.Point, level);
 
-            await WriteStateAsync();
+            return WriteStateAsync();
         }
 
         public Task<Dictionary<ResourceType, ulong>> GetResourceProducrion()
@@ -78,6 +78,11 @@ namespace ServerPrototype.Actors.Grains
             }
 
             return Task.FromResult(result);
+        }
+
+        public Task<List<FarmConstructionLevel>> GetConstructions()
+        {
+            return Task.FromResult(State.Field.ToList());
         }
     }
 }

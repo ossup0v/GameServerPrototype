@@ -1,4 +1,6 @@
-﻿namespace ServerPrototype.Actors.Grains.Models
+﻿using ServerPrototype.Shared;
+
+namespace ServerPrototype.Actors.Grains.Models
 {
     public class PlayerData
     {

@@ -158,18 +158,27 @@ namespace ServerPrototype.App.Infrastructure
                     _userId = apiResult.Value.UserId;
 
                     var playerGrain = _cluster.GetGrain<IPlayerGrain>(_userId);
-                    var playerData = await playerGrain.GetPlayerData();
-                    if (playerData.Status != HttpStatusCode.OK)
+                    var playerInfo = await playerGrain.GetPlayerInfo();
+                    if (playerInfo.Status != HttpStatusCode.OK)
                     {
-                        _log.LogError($"Can't get player data. Message: {playerData.Message}");
-                        SendMessage(new LoginDenyPacket() { Reason = playerData.Message });
+                        _log.LogError($"Can't get player data. Message: {playerInfo.Message}");
+                        SendMessage(new LoginDenyPacket() { Reason = playerInfo.Message });
                         return;
                     }
 
                     await playerGrain.LoginNotify();
-                    var player = playerData.Value;
+                    var player = playerInfo.Value;
 
-                    SendMessage(new LoginConfirmPacket() { NickName = player.Nickname, UserId = _userId, Heroes = new int[0] });
+                    SendMessage(new LoginConfirmPacket()
+                    {
+                        Nickname = player.Nickname,
+                        UserId = _userId, 
+                        Heroes = new int[0],
+                        Constructions = playerInfo.Value.Constructions,
+                        CreatedAt = playerInfo.Value.CreatedAt,
+                        LastLogin = playerInfo.Value.LastLogin
+                    });
+
                     _log.LogInformation($"Loggined. Account: {loginRequest.ClientId}. UserId: {apiResult.Value.UserId}. Nickname: {player.Nickname}. Created: {player.CreatedAt}");
 
                     _nickname = player.Nickname;

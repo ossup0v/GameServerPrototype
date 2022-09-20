@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Http.Headers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using ServerPrototype.Actors.Grains.Common.Components;
@@ -77,9 +78,26 @@ namespace ServerPrototype.Actors.Grains
             return Task.CompletedTask;
         }
 
-        public Task<ApiResult<PlayerData>> GetPlayerData()
+        public async Task<ApiResult<PlayerInfo>> GetPlayerInfo()
         {
-            return Task.FromResult(ApiResult<PlayerData>.OK(State.PlayerData));
+            var inventory = GetComponent<InventoryComponent>();
+            var farmGrain = GrainFactory.GetGrain<IPlayerFarmGrain>(GetPlayerFarmActorId());
+            var constructions = (await farmGrain.GetConstructions())
+                .Select(x => new ConstructionInfo()
+                {
+                    Id = 0,
+                    Level = x.Level, 
+                    Point = x.Point
+                }).ToArray();
+
+            return ApiResult<PlayerInfo>.OK(new PlayerInfo()
+            {
+                CreatedAt = State.PlayerData.CreatedAt,
+                LastLogin = State.PlayerData.LastLogin,
+                Nickname = State.PlayerData.Nickname, 
+                Resources = inventory.Resources,
+                Constructions = constructions
+            });
         }
 
         public Task LoginNotify()
