@@ -91,8 +91,8 @@ namespace ServerPrototype.Actors.Grains
         {
             _logger.LogInformation("Trying to start build construction in farm grain, request {@request}", request);
             //get find construction from static info
-            if (!ContentProvider.Instance.GetFarmConstructions()
-                    .TryGetValue(request.ConstructionId, out var construction))
+            var construction = ContentProvider.Instance.TryGetFarmConstruction(request.ConstructionId);
+            if (construction is null)
                 return ApiResult<int>.BadRequest();
 
             if (!construction.Levels.TryGetValue(request.Level, out var level))

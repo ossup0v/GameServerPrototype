@@ -36,7 +36,8 @@ namespace ServerPrototype.Actors.Grains
             if (_field.ContainsKey(request.Point))
                 return ApiResult<int>.BadRequest();
 
-            if (!ContentProvider.Instance.GetFarmConstructions().TryGetValue(request.ConstructionId, out var construction))
+            var construction = ContentProvider.Instance.TryGetFarmConstruction(request.ConstructionId);
+            if (construction is null)
                 return ApiResult<int>.BadRequest();
 
             if (!construction.Levels.TryGetValue(request.Level, out var level))

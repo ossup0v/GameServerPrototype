@@ -264,7 +264,7 @@ namespace ServerPrototype.App.Infrastructure
             }
 
             _cluster = provider.GetRequiredService<IClusterClient>();
-            _log = provider.GetService<ILogger<UserSession>>();
+            _log = provider.GetRequiredService<ILogger<UserSession>>();
             _closeTcs = new CancellationTokenSource();
             _metrics = provider.GetRequiredService<IMetricsUpdater>();
             _nickname = string.Empty;
