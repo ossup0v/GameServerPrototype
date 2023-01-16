@@ -24,31 +24,7 @@ namespace ServerPrototype.App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-
-//            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new JsonKnownTypeConverter());
-
-
-            //BsonClassMap.RegisterClassMap<PlayerFarmGrain.PlayerFramState>(cm =>
-            //{
-            //    cm.AutoMap();
-            //    //cm.SetDictionaryRepresentation(x => x.InventoryContainer.Items, DictionaryRepresentation.Document);
-            //    cm.SetDictionaryRepresentation(x => x., DictionaryRepresentation.Document);
-            //});
-            //BsonClassMap.RegisterClassMap<PlayerState>(cm =>
-            //{
-            //    cm.AutoMap();
-            //    //cm.SetDictionaryRepresentation(x => x.InventoryContainer.Items, DictionaryRepresentation.Document);
-            //    cm.SetDictionaryRepresentation(x => x.Stats, DictionaryRepresentation.Document);
-            //});
-
-            services.AddSwaggerGen(c =>
-            {
-                //// Set the comments path for the Swagger JSON and UI.
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //c.IncludeXmlComments(xmlPath);
-            });
+            services.AddSwaggerGen();
 
             // METRICS
             var metrics = AppMetrics.CreateDefaultBuilder()
@@ -64,20 +40,6 @@ namespace ServerPrototype.App
             services.AddSingleton<IApiGameServer, ApiGameServer>();
             services.AddSingleton<IPlayerInventoryDb, PlayerInventoryDb>();
             services.AddSingleton<IPlayerEffectsDb, PlayerEffectsDb>();
-
-            //services.AddSingleton<IMongoDatabase>(provider =>
-            //{
-            //    var config = Configuration.GetSection("Mongo").Get<MongoDbConfig>();
-            //    var client = provider.GetRequiredService<IMongoClient>();
-            //    return client.GetDatabase(config.DbName);
-            //});
-
-
-            //services.AddSingleton<IPlayerRepository, PlayerRepository>();
-            //services.AddSingleton<ICharacterRepository, CharacterRepository>();
-            //services.AddSingleton<IBattleRepository, BattleRepository>();
-            //services.AddSingleton<IMetricsUpdater, AppMetricsProxy>();
-            //services.AddSingleton<IMessageSerializer, MessagePackSerializerProxy>();
 
             services.TryAddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
             services.TryAddSingleton(serviceProvider =>
@@ -104,19 +66,9 @@ namespace ServerPrototype.App
             //add here new profiles from AutoMapper 
             services.AddAutoMapper(config =>
             {
-                //config.AddProfile<PacketProfile>();
-                //config.AddProfile<ConfigProfile>();
-                //config.AddProfile<ServerProfile>();
-                //config.AddProfile<ControllerProfile>();
             });
 
             services.AddHttpClient();
-
-            //services.Configure<HttpClientsConfig>(Configuration.GetSection("HttpClients"));
-            //services.AddHttpClient(Constants.HTTP_CLIENT_BOTS_KEY, (serviceProvider, config) =>
-            //{
-            //    config.BaseAddress = new Uri(serviceProvider.GetRequiredService<IOptions<HttpClientsConfig>>().Value.BotsManagerBasePath);
-            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,5 +11,11 @@
     <PackageReference Include="MessagePack.Annotations" Version="2.4.35" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
   </ItemGroup>
+  
+      <ItemGroup>
+        <Compile Include="..\..\..\GameServerPrototype-Shared\**\*.cs">
+            <Link>Shared\%(RecursiveDir)%(FileName)%(Extension)</Link>
+        </Compile>
+    </ItemGroup>
 
 </Project>
